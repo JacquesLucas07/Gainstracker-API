@@ -61,6 +61,40 @@ CREATE TABLE friendships (
     CHECK(user_id != friend_id)
 );
 
+-- Table des repas favoris
+CREATE TABLE favorite_meals (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    nom TEXT NOT NULL, -- nom du repas favori
+    description TEXT,
+    type_repas TEXT, -- petit-dejeuner, dejeuner, diner, collation
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Table des aliments dans les repas favoris
+CREATE TABLE favorite_meal_items (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    favorite_meal_id INTEGER NOT NULL,
+    aliment_id INTEGER NOT NULL,
+    quantite REAL NOT NULL, -- en grammes
+    FOREIGN KEY (favorite_meal_id) REFERENCES favorite_meals(id) ON DELETE CASCADE,
+    FOREIGN KEY (aliment_id) REFERENCES aliments(id) ON DELETE CASCADE
+);
+
+-- Table des activités physiques
+CREATE TABLE activities (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    nom TEXT NOT NULL, -- ex: Course à pied, Natation, Musculation
+    duree INTEGER NOT NULL, -- en minutes
+    calories_brulees REAL DEFAULT 0, -- calories estimées brûlées
+    intensite TEXT, -- faible, moderee, elevee
+    date_activite TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    notes TEXT,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
 -- Index pour optimiser les requêtes fréquentes
 CREATE INDEX idx_consommation_user ON consommation(user_id);
 CREATE INDEX idx_consommation_date ON consommation(date_consommation);
@@ -68,3 +102,7 @@ CREATE INDEX idx_consommation_user_date ON consommation(user_id, date_consommati
 CREATE INDEX idx_friendships_user ON friendships(user_id);
 CREATE INDEX idx_friendships_friend ON friendships(friend_id);
 CREATE INDEX idx_friendships_status ON friendships(status);
+CREATE INDEX idx_favorite_meals_user ON favorite_meals(user_id);
+CREATE INDEX idx_favorite_meal_items_meal ON favorite_meal_items(favorite_meal_id);
+CREATE INDEX idx_activities_user ON activities(user_id);
+CREATE INDEX idx_activities_date ON activities(date_activite);
