@@ -1,0 +1,20 @@
+# Web Framework pour API
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+
+# Base de données
+sqlalchemy==2.0.25
+
+# Validation de données
+pydantic==2.5.3
+
+# Sécurité et authentification
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.6
+
+# Variables d'environnement
+python-dotenv==1.0.0
+
+# Utilitaires
+python-dateutil==2.8.2
