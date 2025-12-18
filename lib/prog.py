@@ -105,6 +105,7 @@ def calculate_imc(poids: float, taille: float):
         "taille": taille
     }
 
+
 @app.get("/calculations/bmr")
 def calculate_bmr(poids: float, taille: float, age: int, sexe: str):
     """
@@ -116,19 +117,18 @@ def calculate_bmr(poids: float, taille: float, age: int, sexe: str):
     """
     if poids <= 0 or taille <= 0 or age <= 0:
         raise HTTPException(status_code=400, detail="Valeurs invalides")
-    
     if sexe.lower() == "homme":
         bmr = 88.362 + (13.397 * poids) + (4.799 * taille) - (5.677 * age)
     elif sexe.lower() == "femme":
         bmr = 447.593 + (9.247 * poids) + (3.098 * taille) - (4.330 * age)
     else:
         raise HTTPException(status_code=400, detail="Sexe doit être 'homme' ou 'femme'")
-    
     return {
         "bmr": round(bmr, 2),
         "description": "Calories nécessaires au repos",
         "unite": "kcal/jour"
     }
+
 
 @app.get("/calculations/tdee")
 def calculate_tdee(bmr: float, niveau_activite: str):
