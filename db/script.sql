@@ -3,6 +3,15 @@ CREATE TABLE users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE NOT NULL,
     email TEXT UNIQUE,
+    -- Informations physiques
+    poids REAL, -- en kg
+    taille REAL, -- en cm
+    imc REAL, -- calculé automatiquement
+    -- Objectifs nutritionnels
+    objectif_calories REAL, -- calories cibles par jour
+    objectif_proteines REAL, -- en grammes par jour
+    objectif_glucides REAL, -- en grammes par jour
+    objectif_lipides REAL, -- en grammes par jour
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -82,18 +91,31 @@ CREATE TABLE favorite_meal_items (
     FOREIGN KEY (aliment_id) REFERENCES aliments(id) ON DELETE CASCADE
 );
 
--- Table des activités physiques
+-- Table des activités sportives (catalogue de référence)
 CREATE TABLE activities (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER NOT NULL,
     nom TEXT NOT NULL, -- ex: Course à pied, Natation, Musculation
-    duree INTEGER NOT NULL, -- en minutes
-    calories_brulees REAL DEFAULT 0, -- calories estimées brûlées
-    intensite TEXT, -- faible, moderee, elevee
-    date_activite TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    notes TEXT,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    calories_par_heure REAL DEFAULT 0, -- calories brûlées par heure (moyenne)
+    categorie TEXT, -- cardio, musculation, sport, etc.
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Table des pratiques sportives (historique utilisateur)
+CREATE TABLE user_activities (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    activity_id INTEGER NOT NULL,
+    duree INTEGER NOT NULL, -- en minutes
+    calories_brulees REAL DEFAULT 0, -- calories réellement brûlées
+    intensite TEXT, -- faible, moderee, elevee
+    date_pratique TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    notes TEXT,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (activity_id) REFERENCES activities(id) ON DELETE CASCADE
+);
+
+
 
 -- Index pour optimiser les requêtes fréquentes
 CREATE INDEX idx_consommation_user ON consommation(user_id);
@@ -104,5 +126,6 @@ CREATE INDEX idx_friendships_friend ON friendships(friend_id);
 CREATE INDEX idx_friendships_status ON friendships(status);
 CREATE INDEX idx_favorite_meals_user ON favorite_meals(user_id);
 CREATE INDEX idx_favorite_meal_items_meal ON favorite_meal_items(favorite_meal_id);
-CREATE INDEX idx_activities_user ON activities(user_id);
-CREATE INDEX idx_activities_date ON activities(date_activite);
+CREATE INDEX idx_user_activities_user ON user_activities(user_id);
+CREATE INDEX idx_user_activities_date ON user_activities(date_pratique);
+CREATE INDEX idx_user_activities_activity ON user_activities(activity_id);
