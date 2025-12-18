@@ -46,7 +46,25 @@ CREATE TABLE consommation (
     FOREIGN KEY (aliment_id) REFERENCES aliments(id) ON DELETE CASCADE
 );
 
+-- Table des amitiés
+CREATE TABLE friendships (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL, -- utilisateur qui envoie la demande
+    friend_id INTEGER NOT NULL, -- utilisateur qui reçoit la demande
+    status TEXT NOT NULL DEFAULT 'pending', -- pending, accepted, rejected, blocked
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (friend_id) REFERENCES users(id) ON DELETE CASCADE,
+    -- Éviter les doublons et auto-amitié
+    UNIQUE(user_id, friend_id),
+    CHECK(user_id != friend_id)
+);
+
 -- Index pour optimiser les requêtes fréquentes
 CREATE INDEX idx_consommation_user ON consommation(user_id);
 CREATE INDEX idx_consommation_date ON consommation(date_consommation);
 CREATE INDEX idx_consommation_user_date ON consommation(user_id, date_consommation);
+CREATE INDEX idx_friendships_user ON friendships(user_id);
+CREATE INDEX idx_friendships_friend ON friendships(friend_id);
+CREATE INDEX idx_friendships_status ON friendships(status);
