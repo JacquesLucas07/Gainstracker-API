@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent)) # Ajouter le dossier parent au chemin de recherche Python
-from lib.prog import UserCreate, UserResponse, AlimentResponse, ConsommationCreate, ActivityCreate
+from prog import UserCreate, UserResponse, AlimentResponse, ConsommationCreate, ActivityCreate
 from datetime import datetime
 
 print("="*50)
